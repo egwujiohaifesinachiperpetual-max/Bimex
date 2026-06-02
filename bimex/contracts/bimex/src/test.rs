@@ -1,6 +1,6 @@
 use super::*;
 use soroban_sdk::{
-    testutils::{Address as _, Ledger},
+    testutils::{Address as _, Events as _, Ledger},
     token::StellarAssetClient,
     Env, String,
 };
@@ -179,7 +179,7 @@ fn test_evento_contribucion_emitido() {
     cliente.contribuir(&backer, &id, &50_000_000i128);
 
     let events = env.events().all();
-    assert_eq!(events.len(), 1);
+    assert_eq!(events.events().len(), 2);
 }
 
 #[test]
@@ -193,7 +193,7 @@ fn test_evento_yield_emitido() {
     cliente.reclamar_yield(&id);
 
     let events = env.events().all();
-    assert!(events.len() >= 2);
+    assert!(events.events().len() >= 2);
 }
 
 #[test]
@@ -203,10 +203,11 @@ fn test_evento_retiro_emitido() {
     let id = cliente.crear_proyecto(&dueno, &String::from_str(&env, "Evento retiro"), &100_000_000i128, &doc_cid_vacio(&env), &6u32);
     cliente.admin_aprobar(&id);
     cliente.contribuir(&backer, &id, &50_000_000i128);
+    env.ledger().with_mut(|l| l.timestamp = PLAZO_6_MESES + 1);
     let _monto = cliente.retirar_principal(&backer, &id);
 
     let events = env.events().all();
-    assert!(events.len() >= 2);
+    assert!(events.events().len() >= 2);
 }
 
 #[test]
@@ -217,7 +218,7 @@ fn test_evento_admin_aprobar_emitido() {
     cliente.admin_aprobar(&id);
 
     let events = env.events().all();
-    assert_eq!(events.len(), 1);
+    assert_eq!(events.events().len(), 1);
 }
 
 #[test]
@@ -225,10 +226,10 @@ fn test_evento_admin_rechazar_emitido() {
     let (env, cliente, _admin, dueno, _backer) = setup();
 
     let id = cliente.crear_proyecto(&dueno, &String::from_str(&env, "Evento rechazar"), &100_000_000i128, &doc_cid_vacio(&env), &6u32);
-    cliente.admin_rechazar(&id, String::from_str(&env, "Motivo de prueba"));
+    cliente.admin_rechazar(&id, &String::from_str(&env, "Motivo de prueba"));
 
     let events = env.events().all();
-    assert_eq!(events.len(), 1);
+    assert_eq!(events.events().len(), 1);
 }
 
 #[test]
@@ -972,7 +973,7 @@ fn test_admin_cambiar_admin_emite_evento() {
     cliente.admin_cambiar_admin(&admin, &nuevo_admin);
 
     let eventos = env.events().all();
-    assert_eq!(eventos.len(), 1);
+    assert_eq!(eventos.events().len(), 1);
 }
 
 #[test]

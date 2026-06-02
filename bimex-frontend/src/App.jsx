@@ -9,7 +9,8 @@ import MiCuenta         from "./components/MiCuenta";
 import Changelog        from "./components/Changelog";
 import Terminos         from "./components/Terminos";
 import Privacidad       from "./components/Privacidad";
-import OnboardingTour, { shouldShowTour } from "./components/OnboardingTour";
+import OnboardingTour from "./components/OnboardingTour";
+import { shouldShowTour } from "./utils/onboardingUtils";
 import { getStorage }   from "./utils/storage";
 import { parsearError } from "./utils/errores";
 import { useCetesRate } from "./hooks/useCetesRate";
@@ -139,7 +140,6 @@ function useLiveStats() {
   const [stats, setStats] = useState(() => _statsCache ?? { totalProyectos: "—", totalBloqueado: "—", enProgreso: "—" });
   useEffect(() => {
     if (_statsCache && Date.now() - _statsCacheTs < 15_000) {
-      setStats(_statsCache);
       return;
     }
     cargarContratoFns()
@@ -427,6 +427,7 @@ export default function App() {
     : t("pwa.subtitle");
 
   const refrescarLista = useCallback(() => { setRefrescar(r => r + 1); }, []);
+  const cerrarDetalle  = useCallback(() => navigate("/proyectos"), [navigate]);
 
   return (
     <div>
@@ -575,7 +576,7 @@ export default function App() {
             element={
               <DetalleProyecto
                 direccion={direccion}
-                onCerrar={() => navigate("/proyectos")}
+                onCerrar={cerrarDetalle}
                 onError={mostrarError}
                 onToast={(msg) => agregarToast(msg, "success")}
               />
@@ -615,7 +616,7 @@ export default function App() {
                   <AdminPanel
                     direccion={direccion}
                     adminAddress={ADMIN_ADDRESS}
-                    onCerrar={() => navigate("/proyectos")}
+                    onCerrar={cerrarDetalle}
                     onError={mostrarError}
                   />
                 </Suspense>

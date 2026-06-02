@@ -312,8 +312,9 @@ impl BimexContrato {
         extender_ttl_proyecto(&env, id_proyecto);
         extender_ttl_aportacion(&env, id_proyecto, &backer);
 
+        #[allow(deprecated)]
         env.events().publish(
-            (symbol_short!("contribuir"), backer.clone()),
+            (symbol_short!("aportar"), backer.clone()),
             (id_proyecto, cantidad, ahora),
         );
 
@@ -325,7 +326,7 @@ impl BimexContrato {
     /// No modifica el estado del contrato.
     pub fn calcular_yield(env: Env, id_proyecto: u32, backer: Address) -> i128 {
         let aportacion: Aportacion = env
-            .storage().persistent().get(&Clave::Aportacion(id_proyecto, backer))
+            .storage().persistent().get(&Clave::Aportacion(id_proyecto, backer.clone()))
             .expect("Este backer no tiene aportacion en este proyecto");
 
         let cetes_bps = env.storage().instance().get::<_, u32>(&Clave::YieldCetesBps).unwrap_or(DEFAULT_CETES_BPS) as i128;
@@ -424,6 +425,7 @@ impl BimexContrato {
         extender_ttl_instancia(&env);
         extender_ttl_proyecto(&env, id_proyecto);
 
+        #[allow(deprecated)]
         env.events().publish(
             (symbol_short!("yield"), proyecto.dueno.clone()),
             (id_proyecto, yield_monto, ahora),
@@ -494,6 +496,7 @@ impl BimexContrato {
 
         env.storage().persistent().set(&Clave::Proyecto(id_proyecto), &proyecto);
 
+        #[allow(deprecated)]
         env.events().publish(
             (symbol_short!("retiro"), backer.clone()),
             (id_proyecto, monto, ahora),
@@ -648,6 +651,7 @@ impl BimexContrato {
         extender_ttl_instancia(&env);
         extender_ttl_proyecto(&env, id_proyecto);
 
+        #[allow(deprecated)]
         env.events().publish(
             (symbol_short!("aprobar"), admin.clone()),
             (id_proyecto, env.ledger().timestamp()),
@@ -677,6 +681,7 @@ impl BimexContrato {
         extender_ttl_instancia(&env);
         extender_ttl_proyecto(&env, id_proyecto);
 
+        #[allow(deprecated)]
         env.events().publish(
             (symbol_short!("rechazar"), admin.clone()),
             (id_proyecto, motivo_event, env.ledger().timestamp()),
@@ -693,6 +698,7 @@ impl BimexContrato {
 
         env.storage().instance().set(&Clave::Admin, &nuevo_admin);
 
+        #[allow(deprecated)]
         env.events().publish(
             (soroban_sdk::symbol_short!("adm_chg"), admin_actual, nuevo_admin.clone()),
             nuevo_admin

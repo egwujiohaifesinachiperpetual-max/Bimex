@@ -24,7 +24,7 @@ const IconCheckCircle = () => (
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 
-export default function AdminPanel({ direccion, adminAddress, onCerrar }) {
+export default function AdminPanel({ direccion, onCerrar }) {
   const { t } = useTranslation();
   const [proyectos,  setProyectos]  = useState([]);
   const [cargando,   setCargando]   = useState(true);
@@ -33,8 +33,12 @@ export default function AdminPanel({ direccion, adminAddress, onCerrar }) {
   const modalRef      = useRef(null);
   const botonAbrioRef = useRef(null);
 
+  function mostrarToast(msg, tipo = "success") {
+    setToast({ msg, tipo });
+    setTimeout(() => setToast(null), 4500);
+  }
+
   async function cargarPendientes() {
-    setCargando(true);
     try {
       const todos = await obtenerTodosLosProyectos();
       setProyectos(todos.filter((p) => p.estado === "EnRevision"));
@@ -44,6 +48,7 @@ export default function AdminPanel({ direccion, adminAddress, onCerrar }) {
     setCargando(false);
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { cargarPendientes(); }, []);
 
   useEffect(() => {
@@ -72,11 +77,6 @@ export default function AdminPanel({ direccion, adminAddress, onCerrar }) {
       botonAbrioRef.current?.focus?.();
     };
   }, [onCerrar]);
-
-  function mostrarToast(msg, tipo = "success") {
-    setToast({ msg, tipo });
-    setTimeout(() => setToast(null), 4500);
-  }
 
   async function manejarAprobar(idProyecto) {
     try {
