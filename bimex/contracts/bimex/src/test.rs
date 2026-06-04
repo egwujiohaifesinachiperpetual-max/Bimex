@@ -990,13 +990,11 @@ fn test_admin_cambiar_admin_mismo_admin_falla() {
 #[test]
 fn test_solo_admin_puede_upgrade() {
     let (env, cliente, admin, _dueno, _backer) = setup();
-    
-    // Generar un hash de wasm simulado
     let mut hash = [0u8; 32];
     hash[0] = 1;
     let new_wasm_hash = soroban_sdk::BytesN::from_array(&env, &hash);
-    
-    // Esto debería ejecutarse sin error ya que es el admin
+    // Auth check passes; actual WASM update is skipped in test mode
+    // (update_current_contract_wasm requires real WASM in the ledger).
     cliente.admin_upgrade(&admin, &new_wasm_hash);
 }
 
@@ -1004,11 +1002,8 @@ fn test_solo_admin_puede_upgrade() {
 #[should_panic(expected = "Solo el admin puede actualizar el contrato")]
 fn test_no_admin_no_puede_upgrade() {
     let (env, cliente, _admin, dueno, _backer) = setup();
-    
     let mut hash = [0u8; 32];
     hash[0] = 1;
     let new_wasm_hash = soroban_sdk::BytesN::from_array(&env, &hash);
-    
-    // Esto fallará porque el dueño no es el admin
     cliente.admin_upgrade(&dueno, &new_wasm_hash);
 }
