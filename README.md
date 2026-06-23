@@ -7,6 +7,7 @@
 [![Contract](https://img.shields.io/badge/Contract-Soroban-orange)](https://soroban.stellar.org)
 [![Frontend](https://img.shields.io/badge/Frontend-Vercel-black)](https://bimex-frontend.vercel.app)
 [![Security](https://img.shields.io/badge/Security-Open-green)](./.github/SECURITY.md)
+For responsible disclosure, see our [Security Policy](.github/SECURITY.md).
 
 Contributors lock MXNe stablecoin into the contract. The yield (~13.45% APY) funds the project. When the project completes, every contributor gets their exact principal back — zero loss.
 
